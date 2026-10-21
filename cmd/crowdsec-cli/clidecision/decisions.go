@@ -105,8 +105,9 @@ func (cli *cliDecisions) decisionsToTable(alerts *models.GetAlertsResponse, prin
 			return nil
 		}
 
-		x, _ := json.MarshalIndent(alerts, "", " ")
-		fmt.Fprintln(os.Stdout, string(x))
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", " ")
+		enc.Encode(alerts)
 	case "human":
 		if len(*alerts) == 0 {
 			fmt.Fprintln(os.Stdout, "No active decisions")

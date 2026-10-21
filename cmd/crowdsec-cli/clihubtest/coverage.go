@@ -115,26 +115,20 @@ func (cli *cliHubTest) coverage(showScenarioCov bool, showParserCov bool, showAp
 			fmt.Fprintf(os.Stdout, "APPSEC RULES  : %d%% of coverage\n", appsecRuleCoveragePercent)
 		}
 	case "json":
-		dump, err := json.MarshalIndent(parserCoverage, "", " ")
-		if err != nil {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", " ")
+
+		if err := enc.Encode(parserCoverage); err != nil {
 			return err
 		}
 
-		fmt.Fprint(os.Stdout, string(dump))
-
-		dump, err = json.MarshalIndent(scenarioCoverage, "", " ")
-		if err != nil {
+		if err := enc.Encode(scenarioCoverage); err != nil {
 			return err
 		}
 
-		fmt.Fprint(os.Stdout, string(dump))
-
-		dump, err = json.MarshalIndent(appsecRuleCoverage, "", " ")
-		if err != nil {
+		if err := enc.Encode(appsecRuleCoverage); err != nil {
 			return err
 		}
-
-		fmt.Fprint(os.Stdout, string(dump))
 	default:
 		return errors.New("only human/json output modes are supported")
 	}

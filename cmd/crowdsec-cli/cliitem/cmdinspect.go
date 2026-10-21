@@ -216,12 +216,12 @@ func inspectItem(ctx context.Context, hub *cwhub.Hub, item *cwhub.Item, wantMetr
 			return fmt.Errorf("unable to serialize item: %w", err)
 		}
 	case "json":
-		b, err := json.MarshalIndent(*item, "", "  ")
-		if err != nil {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+
+		if err := enc.Encode(*item); err != nil {
 			return fmt.Errorf("unable to serialize item: %w", err)
 		}
-
-		fmt.Fprintln(os.Stdout, string(b))
 	}
 
 	if output != "human" {

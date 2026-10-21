@@ -173,12 +173,12 @@ func ListItems(out io.Writer, wantColor string, itemTypes []string, items map[st
 			}
 		}
 
-		x, err := json.MarshalIndent(hubStatus, "", " ")
-		if err != nil {
+		enc := json.NewEncoder(out)
+		enc.SetIndent("", " ")
+
+		if err := enc.Encode(hubStatus); err != nil {
 			return fmt.Errorf("failed to parse: %w", err)
 		}
-
-		fmt.Fprint(out, string(x))
 	case "raw":
 		csvwriter := csv.NewWriter(out)
 

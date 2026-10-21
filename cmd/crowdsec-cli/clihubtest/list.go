@@ -29,12 +29,12 @@ func (cli *cliHubTest) newListCmd() *cobra.Command {
 			case "human":
 				hubTestListTable(color.Output, cfg.Cscli.Color, hubPtr.Tests)
 			case "json":
-				j, err := json.MarshalIndent(hubPtr.Tests, " ", "  ")
-				if err != nil {
+				enc := json.NewEncoder(os.Stdout)
+				enc.SetIndent(" ", "  ")
+
+				if err := enc.Encode(hubPtr.Tests); err != nil {
 					return err
 				}
-
-				fmt.Fprintln(os.Stdout, string(j))
 			default:
 				return errors.New("only human/json output modes are supported")
 			}

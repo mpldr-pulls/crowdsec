@@ -474,12 +474,12 @@ func (cli *cliConsole) newStatusCmd() *cobra.Command {
 					"console": console,
 				}
 
-				data, err := json.MarshalIndent(out, "", "  ")
-				if err != nil {
+				enc := json.NewEncoder(os.Stdout)
+				enc.SetIndent("", "  ")
+
+				if err := enc.Encode(out); err != nil {
 					return fmt.Errorf("failed to serialize configuration: %w", err)
 				}
-
-				fmt.Fprintln(os.Stdout, string(data))
 			case "raw":
 				csvwriter := csv.NewWriter(os.Stdout)
 

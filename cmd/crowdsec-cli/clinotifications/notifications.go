@@ -177,11 +177,12 @@ func (cli *cliNotifications) newListCmd() *cobra.Command {
 			if cfg.Cscli.Output == "human" {
 				notificationListTable(color.Output, cfg.Cscli.Color, ncfgs)
 			} else if cfg.Cscli.Output == "json" {
-				x, err := json.MarshalIndent(ncfgs, "", " ")
-				if err != nil {
+				enc := json.NewEncoder(os.Stdout)
+				enc.SetIndent("", " ")
+
+				if err := enc.Encode(ncfgs); err != nil {
 					return fmt.Errorf("failed to serialize notification configuration: %w", err)
 				}
-				fmt.Fprint(os.Stdout, string(x))
 			} else if cfg.Cscli.Output == "raw" {
 				csvwriter := csv.NewWriter(os.Stdout)
 				err := csvwriter.Write([]string{"Name", "Type", "Profile name"})
@@ -239,11 +240,12 @@ func (cli *cliNotifications) newInspectCmd() *cobra.Command {
 					fmt.Fprintf(os.Stdout, " - %15s: %15v\n", k, v)
 				}
 			} else if cfg.Cscli.Output == "json" {
-				x, err := json.MarshalIndent(cfg, "", " ")
-				if err != nil {
+				enc := json.NewEncoder(os.Stdout)
+				enc.SetIndent("", " ")
+
+				if err := enc.Encode(cfg); err != nil {
 					return fmt.Errorf("failed to serialize notification configuration: %w", err)
 				}
-				fmt.Fprint(os.Stdout, string(x))
 			}
 
 			return nil

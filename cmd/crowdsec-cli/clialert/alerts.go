@@ -109,8 +109,9 @@ func (cli *cliAlerts) alertsToTable(alerts *models.GetAlertsResponse, printMachi
 			return nil
 		}
 
-		x, _ := json.MarshalIndent(alerts, "", " ")
-		fmt.Fprint(os.Stdout, string(x))
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", " ")
+		enc.Encode(alerts)
 	case "human":
 		if len(*alerts) == 0 {
 			fmt.Fprintln(os.Stdout, "No active alerts")
@@ -451,12 +452,12 @@ func (cli *cliAlerts) inspect(ctx context.Context, details bool, alertIDs ...str
 				continue
 			}
 		case "json":
-			data, err := json.MarshalIndent(alert, "", "  ")
-			if err != nil {
+			enc := json.NewEncoder(os.Stdout)
+			enc.SetIndent("", "  ")
+
+			if err := enc.Encode(alert); err != nil {
 				return fmt.Errorf("unable to serialize alert with id %s: %w", alertID, err)
 			}
-
-			fmt.Fprintln(os.Stdout, string(data))
 		case "raw":
 			data, err := yaml.Marshal(alert)
 			if err != nil {

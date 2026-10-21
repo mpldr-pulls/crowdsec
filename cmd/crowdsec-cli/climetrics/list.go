@@ -75,12 +75,12 @@ func (cli *cliMetrics) list() error {
 
 		fmt.Fprintln(out, t.Render())
 	case "json":
-		x, err := json.MarshalIndent(allMetrics, "", " ")
-		if err != nil {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", " ")
+
+		if err := enc.Encode(allMetrics); err != nil {
 			return fmt.Errorf("failed to serialize metric types: %w", err)
 		}
-
-		fmt.Fprintln(os.Stdout, string(x))
 	default:
 		return fmt.Errorf("output format '%s' not supported for this command", outputFormat)
 	}

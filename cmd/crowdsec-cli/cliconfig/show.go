@@ -49,12 +49,12 @@ func (cli *cliConfig) showKey(key string) error {
 			litter.Dump(output)
 		}
 	case "json":
-		data, err := json.MarshalIndent(output, "", "  ")
-		if err != nil {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+
+		if err := enc.Encode(output); err != nil {
 			return fmt.Errorf("failed to serialize configuration: %w", err)
 		}
-
-		fmt.Fprintln(os.Stdout, string(data))
 	}
 
 	return nil
@@ -212,12 +212,12 @@ func (cli *cliConfig) show() error {
 			return err
 		}
 	case "json":
-		data, err := json.MarshalIndent(cfg, "", "  ")
-		if err != nil {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+
+		if err := enc.Encode(cfg); err != nil {
 			return fmt.Errorf("failed to serialize configuration: %w", err)
 		}
-
-		fmt.Fprintln(os.Stdout, string(data))
 	case "raw":
 		data, err := yaml.Marshal(cfg)
 		if err != nil {

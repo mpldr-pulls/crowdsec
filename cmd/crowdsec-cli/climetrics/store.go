@@ -311,12 +311,12 @@ func (ms metricStore) Format(out io.Writer, wantColor string, sections []string,
 			}
 		}
 	case "json":
-		x, err := json.MarshalIndent(want, "", " ")
-		if err != nil {
+		enc := json.NewEncoder(out)
+		enc.SetIndent("", " ")
+
+		if err := enc.Encode(want); err != nil {
 			return fmt.Errorf("failed to serialize metrics: %w", err)
 		}
-
-		fmt.Fprint(out, string(x))
 	default:
 		return fmt.Errorf("output format '%s' not supported for this command", outputFormat)
 	}
